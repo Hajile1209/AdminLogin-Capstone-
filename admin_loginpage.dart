@@ -13,149 +13,155 @@ class _AdminLoginpageState extends State<AdminLoginpage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool rememberUser = false;
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
-
     myColor = Theme.of(context).primaryColor;
     mediaSize = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
         color: myColor,
         image: DecorationImage(
-        image: const AssetImage("assets/images/backg.jpg"),
-        fit: BoxFit.cover,
-        colorFilter: ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop))
-      
+          image: const AssetImage("assets/images/backg.jpg"),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(children: [
           Positioned(top: 80, child: _buildTop()),
           Positioned(bottom: 0, child: _buildBottom()),
-
         ]),
       ),
     );
   }
-  Widget _buildTop(){
+
+  Widget _buildTop() {
     return SizedBox(
-      width: mediaSize.width,
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.location_on_sharp,
-          size: 100,
-          color: Colors.white
-           ),
-           Text(
-            "GO MAP",
-            style:TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 40,
-            letterSpacing: 2),
+        width: mediaSize.width,
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.admin_panel_settings,
+                size: 100, color: Colors.white),
+            Text(
+              "ADMIN LOGIN",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 36,
+                  letterSpacing: 2),
             )
-        ],
-      )
-    );
+          ],
+        ));
   }
 
-  Widget _buildBottom(){
+  Widget _buildBottom() {
     return SizedBox(
       width: mediaSize.width,
       child: Card(
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          )),
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: _buildForm(),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: _buildForm(),
+        ),
       ),
     );
   }
 
-Widget _buildForm(){
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text("Welcome", 
-      style: TextStyle(
-        color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
-      ),
-      Text("Please login with your information"),
-      const SizedBox(height: 60),
-      _buildGreyText("Username"),
-      _buildInputField(usernameController),
-      const SizedBox(height: 40),
-      _buildGreyText("Password"),
-      _buildInputField(passwordController, isPassword: true),
-      const SizedBox(height: 20),
-      _buildRememberForgot(),
-      const SizedBox(height: 20),
-      _buildLoginButton(),
-      const SizedBox(height: 20),
-    ]
-  );
-}
-
-Widget _buildGreyText(String text) {
-  return Text(
-    text,
-    style: const TextStyle(color: Colors.grey),
-    );
-}
-
-Widget _buildInputField(TextEditingController controller,
-      {isPassword = false}) {
-        return TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
-          ),
-          obscureText: isPassword,
-        );
-      }
-
-Widget _buildRememberForgot() {
-  return Row( 
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Row(
+  Widget _buildForm() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Checkbox(value: rememberUser, onChanged: (value){
-            setState(() {
-              rememberUser = value!;
-            });
-          }),
-          _buildGreyText("Remember me"),
-        ],
-      ),
-      TextButton(
-        onPressed: () {}, child: _buildGreyText("I Forgot My Password"))
-    ],
+          Text(
+            "Welcome Admin",
+            style: TextStyle(
+                color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
+          ),
+          const Text("Please login with your credentials"),
+          const SizedBox(height: 60),
+          _buildGreyText("Username"),
+          _buildInputField(usernameController),
+          const SizedBox(height: 40),
+          _buildGreyText("Password"),
+          _buildInputField(passwordController, isPassword: true),
+          const SizedBox(height: 20),
+          _buildRememberForgot(),
+          const SizedBox(height: 20),
+          _buildLoginButton(),
+          const SizedBox(height: 20),
+        ]);
+  }
+
+  Widget _buildGreyText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.grey),
     );
   }
 
-Widget _buildLoginButton() {
-  return ElevatedButton(
-  onPressed: () {
-    debugPrint("Username : ${usernameController.text}");
-    debugPrint("Password : ${passwordController.text}");
+  Widget _buildInputField(TextEditingController controller,
+      {bool isPassword = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword ? _obscurePassword : false,
+      decoration: InputDecoration(
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              )
+            : null, // No check icon for username
+      ),
+    );
+  }
 
-  }, 
-  style: ElevatedButton.styleFrom(
-    shape: const StadiumBorder(),
-    elevation: 20,
-    shadowColor: myColor,
-    minimumSize: const Size.fromHeight(60),
-  ),
-  child: const Text("Login"),
-  );
+  Widget _buildRememberForgot() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Checkbox(
+                value: rememberUser,
+                onChanged: (value) {
+                  setState(() {
+                    rememberUser = value!;
+                  });
+                }),
+            _buildGreyText("Remember me"),
+          ],
+        ),
+        TextButton(
+            onPressed: () {},
+            child: _buildGreyText("I Forgot My Password"))
+      ],
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return ElevatedButton(
+      onPressed: () {
+        debugPrint("Admin Username : ${usernameController.text}");
+        debugPrint("Admin Password : ${passwordController.text}");
+      },
+      style: ElevatedButton.styleFrom(
+        shape: const StadiumBorder(),
+        elevation: 20,
+        shadowColor: myColor,
+        minimumSize: const Size.fromHeight(60),
+      ),
+      child: const Text("Login"),
+    );
+  }
 }
-
-}
-
